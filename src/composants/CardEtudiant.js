@@ -1,21 +1,35 @@
-import { Grid } from '@mui/material';
+import { Grid, Avatar } from '@mui/material';
 import React from 'react';
+import check from '../assets/image/check.png';
 
-function CardEtudiant() {
+function CardEtudiant({ etudiant, onPress }) {
   return (
-    <Grid container spacing={2} sx={{ cursor: 'pointer' }}>
+    <Grid
+      container
+      onClick={() => {
+        onPress(etudiant);
+      }}
+      spacing={2}
+      sx={{ cursor: 'pointer', marginTop: 1 }}
+    >
       <Grid item xs={1}></Grid>
       <Grid item xs={2}>
-        Status
+        {etudiant.admis && (
+          <Avatar
+            alt="Logo IST-T"
+            src={check}
+            sx={{ width: 30, height: 30, marginTop: -1 }}
+          />
+        )}
       </Grid>
       <Grid item xs={3}>
-        Nom et prénoms
+        {etudiant.nom} {etudiant.prenom}
       </Grid>
       <Grid item xs={3}>
-        Parours
+        {etudiant.parcours}
       </Grid>
       <Grid item xs={2}>
-        Type de formation
+        {etudiant.typeFormation}
       </Grid>
       <Grid item xs={1}></Grid>
     </Grid>

@@ -46,6 +46,16 @@ const ListeSortant = () => {
           label="Année universitaire"
           variant="outlined"
         />{' '}
+        <TextField
+          id="outlined-basic"
+          type={'text'}
+          label="Promotion"
+          variant="outlined"
+
+          // onChange={(event) => {
+          //   setPromotion(event.target.value);
+          // }}
+        />
         <br />
         <Button
           type="submit"

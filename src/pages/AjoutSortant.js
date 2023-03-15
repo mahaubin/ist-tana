@@ -7,30 +7,57 @@ import FormControl from '@mui/material/FormControl';
 import CardEtudiant from '../composants/CardEtudiant';
 import Select from '@mui/material/Select';
 import axios from 'axios';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import { useNavigate } from 'react-router-dom';
 
 const AjoutSortant = () => {
+  const redirect = useNavigate();
   const [etudiant, setEtudiant] = useState([]);
   const [typeFormation, setTypeFormation] = useState('');
   const [parcours, setParcours] = useState('');
   const [anneEtude, setAnneEtude] = useState('');
-  const [idEtudiant, setIdEtudiant] = useState([]);
+  const [promotion, setPromotion] = useState();
 
-  const selectionne = (student) => {
-    const updateStudent = { ...student, admis: !student.admis };
+  const updateEtudiant = (student) => {
+    const updateStudent = {
+      ...student,
+      admis: !student.admis,
+    };
     const indexToUpdate = etudiant.findIndex(
-      (student) => student.id === updateStudent._id
+      (student) => student._id === updateStudent._id
     );
 
-    const updatedToStudent = [...etudiant];
-    updatedToStudent[indexToUpdate] = updateStudent;
-    setEtudiant(updatedToStudent);
+    const updatedStudentList = [...etudiant];
+    updatedStudentList[indexToUpdate] = updateStudent;
+    setEtudiant(updatedStudentList);
+  };
+
+  function renderListeEtudiant() {
+    return etudiant.map((student) => (
+      <CardEtudiant
+        onPress={updateEtudiant}
+        etudiant={student}
+        key={student._id}
+      />
+    ));
+  }
+
+  const addSortant = async (e) => {
+    e.preventDefault();
+    try {
+      const reinscriptionData = {
+        etudiant,
+        promotion,
+        anneEtude,
+      };
+      await axios.patch(
+        `http://127.0.0.1:5000/api/etudiant/addSortant`,
+        reinscriptionData
+      );
+      redirect('/home');
+      window.location.reload(true);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const recherche = async (e) => {
@@ -57,7 +84,6 @@ const AjoutSortant = () => {
   useEffect(() => {}, []);
   return (
     <div className="main">
-      {console.log(etudiant)}
       <form className="centre" onSubmit={recherche}>
         <FormControl
           variant="filled"
@@ -89,6 +115,7 @@ const AjoutSortant = () => {
             }}
           >
             <MenuItem value={'TIM'}>TIM</MenuItem>
+            <MenuItem value={'RT'}>RT</MenuItem>
             <MenuItem value={'BAT1'}>BAT1</MenuItem>
             <MenuItem value={'BAT2'}>BAT2</MenuItem>
             <MenuItem value={'TP1'}>TP1</MenuItem>
@@ -153,53 +180,6 @@ const AjoutSortant = () => {
       <Grid container spacing={2}>
         <Grid item xs={1}></Grid>
         <Grid item xs={10}>
-          {/* <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Nom et Prénoms</TableCell>
-                  <TableCell align="left">Parcours</TableCell>
-                  <TableCell align="left">Type de formation</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {etudiant &&
-                  etudiant.map((val) => {
-                    return (
-                      <TableRow
-                        key={val._id}
-                        sx={{
-                          '&:last-child td, &:last-child th': { border: 0 },
-                        }}
-                      >
-                        <Button
-                          onClick={() => {
-                            selectionne(etudiant);
-                          }}
-                        >
-                          <TableCell component="th" scope="row">
-                            {val.admis ? (
-                              <Typography>Admis</Typography>
-                            ) : (
-                              <Typography>Non Admis</Typography>
-                            )}
-                          </TableCell>
-                        </Button>
-
-                        <TableCell align="left">
-                          {val.nom} {val.prenom}
-                        </TableCell>
-
-                        <TableCell align="left">{val.parcours}</TableCell>
-
-                        <TableCell align="left">{val.typeFormation}</TableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer> */}
           <Grid container spacing={2}>
             <Grid item xs={1}></Grid>
             <Grid item xs={2}>
@@ -217,10 +197,60 @@ const AjoutSortant = () => {
             <Grid item xs={1}></Grid>
           </Grid>{' '}
           <br />
-          <CardEtudiant />
+          {renderListeEtudiant()}
         </Grid>
         <Grid item xs={1}></Grid>
       </Grid>
+      <form className="centre" onSubmit={addSortant}>
+        <Grid container>
+          <Grid item xs={2}></Grid>
+          <Grid item xs={8}>
+            <Grid container>
+              <Grid item xs={6}>
+                <TextField
+                  id="outlined-basic"
+                  type={'text'}
+                  label="Promotion"
+                  variant="outlined"
+                  sx={{ width: 320 }}
+                  onChange={(event) => {
+                    setPromotion(event.target.value);
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={4}>
+                <TextField
+                  id="outlined-basic"
+                  type={'number'}
+                  label="Année universitaire"
+                  variant="outlined"
+                  onChange={(event) => {
+                    setAnneEtude(event.target.value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  style={{ textTransform: 'none' }}
+                  sx={{
+                    width: 100,
+                    height: 50,
+                    backgroundColor: '#0081B4',
+                    paddingLeft: 3,
+                    paddingRight: 3,
+                  }}
+                >
+                  Ajouter
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={2}></Grid>
+        </Grid>
+      </form>{' '}
     </div>
   );
 };

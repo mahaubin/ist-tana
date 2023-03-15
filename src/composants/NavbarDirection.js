@@ -19,7 +19,7 @@ const NavbarDirection = () => {
         <Toolbar>
           <Avatar alt="Logo IST-T" src={logo} variant="square" href="/" />
           <Link
-            href="/"
+            href="/home"
             sx={{ color: 'white', margin: 2, fontWeight: 'bold', fontSize: 20 }}
             underline="none"
           >

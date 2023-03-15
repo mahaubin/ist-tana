@@ -120,10 +120,11 @@ const Inscription = () => {
           <form className="centre" onSubmit={inscriptionExcel}>
             <TextField
               id="outlined-basic"
-              type={'file'}
+              type={'number'}
+              label="Année"
               variant="outlined"
               onChange={(event) => {
-                setFichier(event.target.files[0]);
+                setAnneEtude(event.target.value);
               }}
             />
             <FormControl
@@ -144,13 +145,13 @@ const Inscription = () => {
                 <MenuItem value={'M2'}>M2</MenuItem>
               </Select>
             </FormControl>
+
             <TextField
               id="outlined-basic"
-              type={'number'}
-              label="Année"
+              type={'file'}
               variant="outlined"
               onChange={(event) => {
-                setAnneEtude(event.target.value);
+                setFichier(event.target.files[0]);
               }}
             />
             <br />
